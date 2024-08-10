@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Novinky</h3>
+    <br>
+    {% for n in news %}
+    <div>
+        {{n.timestamp}}
+        <br>
+        {{n.text}}
+    </div>
+    <hr>
+    {% endfor %}
+</div>
+{% endblock %}

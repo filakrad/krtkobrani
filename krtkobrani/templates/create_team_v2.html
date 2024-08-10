@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Registrace</h3>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <h5 class="title">Vytvoř nový tým</h5>
+    <form method="POST" action="/create_team">
+        <div>
+            {{ form.name.label }}:<br>
+            {{ form.name() }}
+        </div>
+        <br>
+        <div>
+            {{ form.email.label }}:<br>
+            {{ form.email() }}
+        </div>
+        <br>
+        <div>
+            {{ form.password.label }}:<br>
+            {{ form.password() }}
+        </div>
+        <br>
+        <div>
+            {{ form.phone.label }}:<br>
+            {{ form.phone() }}
+        </div>
+        <br>
+        <div>
+            {{ form.four_digits.label }}:<br>
+            {{ form.four_digits() }}
+        </div>
+        <br>
+        <div>
+            {{ form.car_type.label }}:<br>
+            {{ form.car_type() }}
+        </div>
+        <br>
+        <div>
+            {{ form.car_spz.label }}:<br>
+            {{ form.car_spz() }}
+        </div>
+        <br>
+        <div>
+            {{ form.other_text.label }}:<br>
+            {{ form.other_text() }}
+        </div>
+        <br>
+        <hr>
+        Musíte vyplnit alespoň jednoho hráče, kapitána.
+        Pokud chcete vyhrát tričko, musíte ke každému hráči vyplnit pohlaví (M/F) a velikost trička (L/XL)
+        <hr>
+        {% for p in player_forms %}
+            {{ p.name.label }}:<br>
+            {{ p.name() }}
+            <br>
+            {{ p.shirt_size.label }}:<br>
+            {{ p.shirt_size() }}
+            <br>
+            {{ p.sex.label }}:<br>
+            {{ p.sex() }}
+            <hr>
+
+        {% endfor %}
+
+        {{ form.submit() }}
+    </form>
+</div>
+{% endblock %}

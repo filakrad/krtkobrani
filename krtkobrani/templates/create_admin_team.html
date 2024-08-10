@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <form method="POST" action="/create_admin_team">
+        <div>
+            {{ form.email.label }}:<br>
+            {{ form.email() }}
+        </div>
+        <br>
+        <div>
+            {{ form.password.label }}:<br>
+            {{ form.password() }}
+        </div>
+        <br>
+
+        {{ form.submit() }}
+    </form>
+</div>
+{% endblock %}
