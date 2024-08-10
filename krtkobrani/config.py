@@ -6,4 +6,4 @@ def read_json(file_path):
         return json.load(f)
 
 
-config = read_json("../config.json")
+config = read_json("config.json")

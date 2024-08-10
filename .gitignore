@@ -1,7 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 .idea/
-*config.json
+config.json
+krtkobrani.log
 *.py[cod]
 *$py.class
 
