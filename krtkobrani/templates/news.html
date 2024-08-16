@@ -1,6 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+{% if current_user.is_admin %}
+
+    <form method="POST" action="/admin_news">
+
+        <hr>
+        {{ form.text.label }}:<br>
+        {{ form.text() }}
+
+        {{ form.button() }}
+    </form>
+
+{% endif %}
+
 <div class="column is-4 is-offset-4">
     <h3 class="title">Novinky</h3>
     <br>
@@ -8,9 +22,10 @@
     <div>
         {{n.timestamp}}
         <br>
-        {{n.text}}
+        {{n.text|safe}}
     </div>
     <hr>
     {% endfor %}
 </div>
+
 {% endblock %}

@@ -9,5 +9,5 @@ class Action(db.Model):
     team_id = db.Column(db.Integer, ForeignKey("site.id"), nullable=False)
     action_state = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
-    guess = db.Column(db.String(128), nullable=False)
+    guess = db.Column(db.String(128))
     success = db.Column(db.Boolean, nullable=False)

@@ -5,7 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 import flask_login
 
-from krtkobrani.db_models import Team, Player
+from krtkobrani.db_models import Team, Player, Action, Site
+from krtkobrani.logic import action_logic
 from krtkobrani.db import db
 from krtkobrani.endpoints import forms
 
@@ -34,23 +35,24 @@ def my_team():
         form.other_text.default = team.other_text
         form.process()
 
-        player_forms[0].name.label.text = 'Jméno kapitána'
-        player_forms[0].name.default = players[0].name
-        player_forms[0].shirt_size.label.text = 'Číslo trička kapitána'
-        player_forms[0].shirt_size.default = players[0].shirt_size
-        player_forms[0].sex.label.text = 'Pohlaví (M/F) kapitána'
-        player_forms[0].sex.default = players[0].sex
-        player_forms[0].hidden_id.default = players[0].id
-        player_forms[0].process()
-        for i in range(1, len(players)):
-            player_forms[i].name.label.text = f'Jméno {i + 1}. hráče'
-            player_forms[i].shirt_size.label.text = f'Číslo trička {i + 1}. hráče'
-            player_forms[i].sex.label.text = f'Pohlaví (M/F) {i + 1}. hráče'
-            player_forms[i].name.default = players[i].name
-            player_forms[i].shirt_size.default = players[i].shirt_size
-            player_forms[i].sex.default = players[i].sex
-            player_forms[i].hidden_id.default = players[i].id
-            player_forms[i].process()
+        if not team.is_admin: # admin team doesn't have players
+            player_forms[0].name.label.text = 'Jméno kapitána'
+            player_forms[0].name.default = players[0].name
+            player_forms[0].shirt_size.label.text = 'Číslo trička kapitána'
+            player_forms[0].shirt_size.default = players[0].shirt_size
+            player_forms[0].sex.label.text = 'Pohlaví (M/F) kapitána'
+            player_forms[0].sex.default = players[0].sex
+            player_forms[0].hidden_id.default = players[0].id
+            player_forms[0].process()
+            for i in range(1, len(players)):
+                player_forms[i].name.label.text = f'Jméno {i + 1}. hráče'
+                player_forms[i].shirt_size.label.text = f'Číslo trička {i + 1}. hráče'
+                player_forms[i].sex.label.text = f'Pohlaví (M/F) {i + 1}. hráče'
+                player_forms[i].name.default = players[i].name
+                player_forms[i].shirt_size.default = players[i].shirt_size
+                player_forms[i].sex.default = players[i].sex
+                player_forms[i].hidden_id.default = players[i].id
+                player_forms[i].process()
 
         return render_template('my_team.html',
                                form=form,
@@ -113,3 +115,54 @@ def new_player():
     db.session.add(player)
     db.session.commit()
     return redirect(url_for('logged.my_team'))
+
+
+@logged.route('/game', methods=['GET', 'POST'])
+@login_required
+def game():
+    help_form = forms.GetHelp()
+    answer_form = forms.SubmitAnswer()
+    all_actions = (db.session.query(Action, Site)
+                   .filter(Action.team_id == flask_login.current_user.id)
+                   .filter(Site.id == Action.site_id)
+                   .order_by(Action.id.desc())
+                   .all())
+    all_actions = list(all_actions)
+    if request.method == 'GET': # process get method
+        return render_template('game.html', help_form=help_form, answer_form=answer_form, all_actions=all_actions)
+
+    print(help_form.button_help.data)
+    print(answer_form.button_send.data)
+
+    if help_form.button_help.data: # process help
+        try:
+            action_logic.ask_for_help(flask_login.current_user.id)
+            redirect(url_for('logged.game'))
+        except action_logic.TooSoon as e:
+            flash(f'V tuto chvíli si nemůžete vzít nápovědu. Až v {e.available_time}')
+            return render_template('game.html', help_form=help_form, answer_form=answer_form,  all_actions=all_actions)
+        except action_logic.BadState:
+            flash('V tuto chvíli si nemůžete vzít nápovědu. Nejste na stanovišti.')
+            return render_template('game.html', help_form=help_form, answer_form=answer_form,  all_actions=all_actions)
+
+    elif answer_form.button_send.data: # process guess
+        last_successful_action = None
+        for act, _ in all_actions:
+            if act.success:
+                last_successful_action = act
+                break
+        print(last_successful_action.id)
+        if 1 <= last_successful_action.action_state <= 3:
+            print("solving")
+            action_logic.try_to_solve(flask_login.current_user.id, answer_form.answer.data)
+        elif 4 <= last_successful_action.action_state <= 5:
+            print("entering")
+            action_logic.try_to_enter(flask_login.current_user.id, answer_form.answer.data)
+
+    return redirect(url_for('logged.game'))
+
+
+@logged.route('/standings', methods=['GET', 'POST'])
+@login_required
+def standings():
+    return render_template('standings.html')

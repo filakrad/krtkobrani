@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Hra</h3>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <div>
+        <form method="POST" action="/game">
+            <div style="display: inline-block;">
+                {{ answer_form.answer.label }}:<br>
+                {{ answer_form.answer() }}<br>
+                {{ answer_form.button_send() }}
+            </div>
+            <div style="float: right;">
+                {{ help_form.button_help() }}
+            </div>
+        </form>
+    </div>
+    <hr>
+    {% for action, site in all_actions %}
+        {% if action.success %}
+            <div style="background-color: green;">
+                {{ action.timestamp }} <br>
+                Stanoviště čislo {{ site.site_number }} <br>
+                {% if action.action_state == 1 %}
+                    Příchod: {{ site.entry_pass }}
+                {% elif action.action_state == 2 %}
+                    Nápověda 1: {{ site.help_1_text }}
+                {% elif action.action_state == 3 %}
+                    Nápověda 2: {{ site.help_2_text }}
+                {% elif action.action_state == 4 %}
+                    Odchod: {{ site.next_site_location }}
+                {% elif action.action_state == 5 %}
+                    Dead: {{ site.next_site_location }}
+                {% endif %}
+            </div>
+        {% else %}
+            <div style="background-color: red;">
+                {{ action.timestamp }} <br>
+                Stanoviště čislo {{ site.site_number }} <br>
+                {% if action.action_state == 1 %}
+                    Pokus o příchod, špatné heslo: {{ action.guess }}
+                {% elif action.action_state == 4 %}
+                    Pokus o odchod, špatné heslo: {{ action.guess }}
+                {% endif %}
+            </div>
+        {% endif %}
+        <hr>
+    {% endfor %}
+</div>
+{% endblock %}

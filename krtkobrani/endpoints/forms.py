@@ -48,3 +48,34 @@ class EditTeamForm(TeamForm):
 
 class AddPlayerButtonForm(FlaskForm):
     button = SubmitField('Přidat hráče')
+
+
+class GetHelp(FlaskForm):
+    button_help = SubmitField('Nápověda')
+
+
+class SubmitAnswer(FlaskForm):
+    answer = StringField('Heslo')
+    button_send = SubmitField('Odeslat')
+
+
+class AddSite(FlaskForm):
+    site_number = IntegerField("Číslo stanoviště")
+    entry_pass = StringField('Heslo pro vstup')
+    exit_pass = StringField('Heslo pro odchod')
+    help_1_text = StringField('Text 1. nápovědy')
+    help_1_time_minutes = IntegerField("Počet minut od příchodu k první nápovědě")
+    help_2_text = StringField('Text 2. nápovědy')
+    help_2_time_minutes = IntegerField("Počet minut od příchodu ke druhé nápovědě")
+    dead_time_minutes = IntegerField("Počet minut od příchodu k deadu")
+    next_site_location = StringField('Lokace dalšího stanoviště')
+    button = SubmitField('Přidat')
+
+
+class AddNews(FlaskForm):
+    text = TextAreaField("Text novinky")
+    button = SubmitField('Přidat')
+
+
+class GameStart(FlaskForm):
+    button = SubmitField('Začít hru')

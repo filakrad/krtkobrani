@@ -16,21 +16,32 @@
                     <ul class="navbar-nav">
                       {% if current_user.is_admin %}
                       <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin.admin_index') }}">Úvod admin</a>
+                        <a class="nav-link" href="{{ url_for('admin.sites') }}">Stanoviště</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.game_start') }}">Začít hru</a>
                       </li>
                       {% endif %}
                       <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('base.index') }}">Úvod</a>
                       </li>
+                      {% if current_user.is_admin %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.news') }}">Novinky</a>
+                      </li>
+                      {% else %}
                       <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('base.news') }}">Novinky</a>
                       </li>
+                      {% endif %}
                       <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('base.rules') }}">Pravidla</a>
                       </li>
+                      {% if not current_user.is_authenticated %}
                       <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.create_team') }}">Registrace</a>
                       </li>
+                      {% endif %}
                       <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('base.teams') }}">Týmy</a>
                       </li>
@@ -39,10 +50,10 @@
                       </li>
                       {% if current_user.is_authenticated %}
                       <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('base.index') }}">Hra</a>
+                        <a class="nav-link" href="{{ url_for('logged.game') }}">Hra</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('base.index') }}">Pořadí</a>
+                        <a class="nav-link" href="{{ url_for('logged.standings') }}">Pořadí</a>
                       </li>
                       {% endif %}
                     </ul>

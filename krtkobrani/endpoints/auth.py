@@ -21,8 +21,6 @@ def login():
 
         team = db.session.query(Team).filter_by(email=email).first()
 
-        logging.info(f"got team {team.name}")
-
         if not team or not check_password_hash(team.password_hash, password):
             flash('Please check your login details and try again.')
             logging.info(f"password validation unsuccessfull")

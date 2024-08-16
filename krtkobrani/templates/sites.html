@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Informace o stanovištích</h3>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <form method="POST" action="/sites">
+        <div>
+            {{ form.site_number.label }}:<br>
+            {{ form.site_number() }}
+        </div>
+        <br>
+        <div>
+            {{ form.entry_pass.label }}:<br>
+            {{ form.entry_pass() }}
+        </div>
+        <br>
+        <div>
+            {{ form.exit_pass.label }}:<br>
+            {{ form.exit_pass() }}
+        </div>
+        <br>
+        <div>
+            {{ form.help_1_text.label }}:<br>
+            {{ form.help_1_text() }}
+        </div>
+        <br>
+        <div>
+            {{ form.help_1_time_minutes.label }}:<br>
+            {{ form.help_1_time_minutes() }}
+        </div>
+        <br>
+        <div>
+            {{ form.help_2_text.label }}:<br>
+            {{ form.help_2_text() }}
+        </div>
+        <br>
+        <div>
+            {{ form.help_2_time_minutes.label }}:<br>
+            {{ form.help_2_time_minutes() }}
+        </div>
+        <br>
+        <div>
+            {{ form.dead_time_minutes.label }}:<br>
+            {{ form.dead_time_minutes() }}
+        </div>
+        <br>
+        <div>
+            {{ form.next_site_location.label }}:<br>
+            {{ form.next_site_location() }}
+        </div>
+        <br>
+        {{ form.button() }}
+    </form>
+    <hr>
+    <hr>
+    {% for site in all_sites %}
+        Číslo: {{ site.site_number }}<br>
+        Vstupní heslo: {{ site.entry_pass  }}<br>
+        Odchodové heslo: {{ site.exit_pass  }}<br>
+        1. nápověda: {{ site.help_1_text  }}<br>
+        Minut od příchodu do 1. nápovědy: {{ site.help_1_time_minutes  }}<br>
+        2. nápověda: {{ site.help_2_text  }}<br>
+        Minut od příchodu do 2. nápovědy: {{ site.help_2_time_minutes  }}<br>
+        Minut od příchodu do deadu: {{ site.dead_time_minutes  }}<br>
+        Následující stanoviště: {{ site.next_site_location  }}<br>
+        <hr>
+
+    {% endfor %}
+    <br>
+</div>
+{% endblock %}
