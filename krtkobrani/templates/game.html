@@ -28,7 +28,7 @@
     {% for action, site in all_actions %}
         {% if action.success %}
             <div style="background-color: green;">
-                {{ action.timestamp }} <br>
+                {{ moment(action.timestamp).format('LLL') }} <br>
                 Stanoviště čislo {{ site.site_number }} <br>
                 {% if action.action_state == 1 %}
                     Příchod: {{ site.entry_pass }}
@@ -44,7 +44,7 @@
             </div>
         {% else %}
             <div style="background-color: red;">
-                {{ action.timestamp }} <br>
+                {{ moment(action.timestamp).format('LLL') }} <br>
                 Stanoviště čislo {{ site.site_number }} <br>
                 {% if action.action_state == 1 %}
                     Pokus o příchod, špatné heslo: {{ action.guess }}

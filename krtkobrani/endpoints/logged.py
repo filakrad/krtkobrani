@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from flask import Blueprint, render_template, redirect, url_for, request, flash
@@ -131,15 +132,15 @@ def game():
     if request.method == 'GET': # process get method
         return render_template('game.html', help_form=help_form, answer_form=answer_form, all_actions=all_actions)
 
-    print(help_form.button_help.data)
-    print(answer_form.button_send.data)
+    if not all_actions: # game didn't started yet
+        return render_template('game.html', help_form=help_form, answer_form=answer_form, all_actions=all_actions)
 
     if help_form.button_help.data: # process help
         try:
             action_logic.ask_for_help(flask_login.current_user.id)
             redirect(url_for('logged.game'))
         except action_logic.TooSoon as e:
-            flash(f'V tuto chvíli si nemůžete vzít nápovědu. Až v {e.available_time}')
+            flash(f'V tuto chvíli si nemůžete vzít nápovědu. Zbývá {e.available_time - datetime.datetime.utcnow()}')
             return render_template('game.html', help_form=help_form, answer_form=answer_form,  all_actions=all_actions)
         except action_logic.BadState:
             flash('V tuto chvíli si nemůžete vzít nápovědu. Nejste na stanovišti.')
@@ -151,13 +152,14 @@ def game():
             if act.success:
                 last_successful_action = act
                 break
-        print(last_successful_action.id)
         if 1 <= last_successful_action.action_state <= 3:
-            print("solving")
             action_logic.try_to_solve(flask_login.current_user.id, answer_form.answer.data)
         elif 4 <= last_successful_action.action_state <= 5:
-            print("entering")
-            action_logic.try_to_enter(flask_login.current_user.id, answer_form.answer.data)
+            try:
+                action_logic.try_to_enter(flask_login.current_user.id, answer_form.answer.data)
+            except action_logic.NoNextSite:
+                flash('Jste v cíli!')
+                return render_template('game.html', help_form=help_form, answer_form=answer_form,  all_actions=all_actions)
 
     return redirect(url_for('logged.game'))
 

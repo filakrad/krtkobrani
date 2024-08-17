@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_login import LoginManager, current_user, AnonymousUserMixin
+from flask_moment import Moment
 import logging
 from logging.config import dictConfig
 
@@ -16,6 +17,7 @@ db_uri = f'{dbcfg["DRIVER"]}://{dbcfg["USER"]}:{dbcfg["PASSWORD"]}@{dbcfg["ADDRE
 
 # create the app
 app = Flask(__name__)
+Moment(app)
 # configure
 app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
 app.config["SQLALCHEMY_POOL_SIZE"] = 10
