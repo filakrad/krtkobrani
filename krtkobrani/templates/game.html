@@ -13,16 +13,18 @@
       {% endif %}
     {% endwith %}
     <div>
-        <form method="POST" action="/game">
-            <div style="display: inline-block;">
+        <div style="display: inline-block;">
+            <form method="POST" action="/game">
                 {{ answer_form.answer.label }}:<br>
                 {{ answer_form.answer() }}<br>
                 {{ answer_form.button_send() }}
-            </div>
-            <div style="float: right;">
+            </form>
+        </div>
+        <div style="float: right;">
+            <form method="POST" action="/game" onsubmit="return confirm('Opravdu chcete nápovědu?');">
                 {{ help_form.button_help() }}
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
     <hr>
     {% for action, site in all_actions %}
