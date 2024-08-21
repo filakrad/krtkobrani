@@ -1,5 +1,8 @@
-SQLAlchemy~=2.0.32
-Flask~=3.0.3
+Flask==3.0.3
+Flask-Login==0.6.3
+Flask-Moment==1.0.6
+Flask-SQLAlchemy==3.1.1
+Flask-WTF==1.2.1
 PyMySQL~=1.1.1
 Werkzeug~=3.0.3
 WTForms~=3.1.2

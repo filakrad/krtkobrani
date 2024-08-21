@@ -29,7 +29,7 @@
     <hr>
     {% for action, site in all_actions %}
         {% if action.success %}
-            <div style="background-color: green;">
+            <div class="correct">
                 {{ moment(action.timestamp).format('LLL') }} <br>
                 Stanoviště čislo {{ site.site_number }} <br>
                 {% if action.action_state == 1 %}
@@ -45,7 +45,7 @@
                 {% endif %}
             </div>
         {% else %}
-            <div style="background-color: red;">
+            <div class="incorrect">
                 {{ moment(action.timestamp).format('LLL') }} <br>
                 Stanoviště čislo {{ site.site_number }} <br>
                 {% if action.action_state == 1 %}
