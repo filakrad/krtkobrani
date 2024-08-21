@@ -20,9 +20,9 @@
     <br>
     {% for n in news %}
     <div>
-        {{n.timestamp}}
+        {{ moment(n.timestamp).format('LLL') }}
         <br>
-        {{n.text|safe}}
+        {{ n.text|safe }}
     </div>
     <hr>
     {% endfor %}
