@@ -38,3 +38,11 @@ def teams():
 @base.route('/sifry')
 def sifry():
     return render_template('ciphers.html')
+
+@base.route('/lapalie')
+def lapalie():
+    return render_template('lapalie.html')
+
+@base.route('/386105397150')
+def clue():
+    return render_template('clue.html')
