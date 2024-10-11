@@ -46,6 +46,3 @@ def lapalie():
 @base.route('/386105397150')
 def clue():
     return render_template('clue.html')
-@base.route('/game_start')
-def game_start():
-    return render_template('game_start.html')

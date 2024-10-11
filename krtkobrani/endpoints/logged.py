@@ -168,19 +168,3 @@ def game():
 @login_required
 def standings():
     return render_template('standings.html')
-
-@logged.route('/game_start', methods=['GET', 'POST'])
-@login_required
-def game_start():
-    form = forms.GameStart()
-    action = db.session.query(Action).first()
-    if action:
-        game_started = True
-    else:
-        game_started = False
-
-    if request.method == 'GET': # process get method
-        return render_template('game_start.html', form=form, game_started=game_started)
-
-    action_logic.start_game()
-    return redirect(url_for('admin.game_start'))
