@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 
 from krtkobrani.db_models import Site, Action, Team
 from krtkobrani.db import db
+from krtkobrani.endpoints.admin import admin
+from krtkobrani.endpoints.base import teams
 from krtkobrani.logic.errors import BadState, TooSoon, NoNextSite
 
 
@@ -21,7 +23,7 @@ def sanitize_string(the_string):
 
 
 def start_game():
-    all_teams = db.session.query(Team).filter_by(is_admin= 0).all()
+    all_teams = db.session.query(Team).filter_by(all_teams= 1).all()
     first_site = db.session.query(Site).filter_by(site_number=1).first()
     start_time = datetime.utcnow()
     for team in all_teams:
