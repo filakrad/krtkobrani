@@ -22,29 +22,38 @@ def sanitize_string(the_string):
     return the_string.lower() # to lower case
 
 
+from datetime import datetime
+from sqlalchemy.orm import Session
+
 def start_game(admin_team_id):
-    # Fetch the admin team to ensure it's valid
-    admin_team = db.session.query(Team).filter_by(id=admin_team_id, is_admin=True).first()
+    session = Session()  # Create a new session
 
-    if admin_team:
-        # Fetch all teams
-        all_teams = db.session.query(Team).all()
-        # Fetch the first site (assuming there is only one for simplicity)
-        first_site = db.session.query(Site).filter_by(site_number=1).first()
-        start_time = datetime.utcnow().isoformat()
+    # Check if the given admin team ID is an admin
+    admin_team = session.query(Team).filter_by(id=admin_team_id, is_admin=True).first()
 
-        actions = []  # To store created actions
+    if admin_team:  # Proceed only if it's a valid admin
+        all_teams = session.query(Team).all()  # Fetch all teams, not just admin
+        first_site = session.query(Site).filter_by(site_number=1).first()  # Assuming you have a site number 1
+        start_time = datetime.utcnow().isoformat()  # Get the current UTC time
+
+        # Iterate through all teams and create actions
         for team in all_teams:
             new_action = Action(
                 site_id=first_site.id,
                 team_id=team.id,
-                action_state=ActionStates.ENTER.value,
+                action_state="ENTER",  # Assuming ActionStates.ENTER.value corresponds to "ENTER"
                 timestamp=start_time,
-                guess="",
+                guess="",  # Assuming guess can be empty initially
                 success=True
             )
-            actions.append(new_action)  # Store the action in a list
-        db.session.add(new_action)  # Add the new action to the session
+            session.add(new_action)  # Add the new action to the session
+
+        session.commit()  # Commit all new actions to the database
+        print("Game started for all teams!")
+        return True  # Return a success indicator
+    else:
+        print("Access denied: Only an admin can start the game.")
+        return False  # Return a failure indicator
 
 
 def try_to_solve(team_id, guess):
