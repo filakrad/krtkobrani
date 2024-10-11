@@ -25,35 +25,30 @@ def sanitize_string(the_string):
 from datetime import datetime
 from sqlalchemy.orm import Session
 
+
 def start_game(admin_team_id):
-    session = Session()  # Create a new session
+    session = db.session  # Use the existing db session
 
     # Check if the given admin team ID is an admin
     admin_team = session.query(Team).filter_by(id=admin_team_id, is_admin=True).first()
 
     if admin_team:  # Proceed only if it's a valid admin
-        all_teams = session.query(Team).all()  # Fetch all teams, not just admin
-        first_site = session.query(Site).filter_by(site_number=1).first()  # Assuming you have a site number 1
-        start_time = datetime.utcnow().isoformat()  # Get the current UTC time
+        all_teams = session.query(Team).all()  # Fetch all teams
+        first_site = session.query(Site).filter_by(site_number=1).first()  # Fetch site with site_number 1
 
-        # Iterate through all teams and create actions
+        start_time = datetime.utcnow()  # Get the current UTC time
+
         for team in all_teams:
             new_action = Action(
                 site_id=first_site.id,
                 team_id=team.id,
-                action_state="ENTER",  # Assuming ActionStates.ENTER.value corresponds to "ENTER"
+                action_state=ActionStates.ENTER.value,
                 timestamp=start_time,
-                guess="",  # Assuming guess can be empty initially
+                guess="",
                 success=True
             )
-            session.add(new_action)  # Add the new action to the session
-
-        session.commit()  # Commit all new actions to the database
-        print("Game started for all teams!")
-        return True  # Return a success indicator
-    else:
-        print("Access denied: Only an admin can start the game.")
-        return False  # Return a failure indicator
+            db.session.add(new_action)
+        db.session.commit()
 
 
 def try_to_solve(team_id, guess):
