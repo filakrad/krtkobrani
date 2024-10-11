@@ -22,20 +22,29 @@ def sanitize_string(the_string):
     return the_string.lower() # to lower case
 
 
-def start_game():
-    all_teams = db.session.query(Team).all()
-    first_site = db.session.query(Site).filter_by(site_number=1).first()
-    start_time = datetime.utcnow()
-    for team in all_teams:
-        new_action = Action(
-            site_id=first_site.id,
-            team_id=team.id,
-            action_state=ActionStates.ENTER.value,
-            timestamp=start_time,
-            guess="",
-            success=True
-        )
-        db.session.add(new_action)
+def start_game(admin_team_id):
+    # Fetch the admin team to ensure it's valid
+    admin_team = db.session.query(Team).filter_by(id=admin_team_id, is_admin=True).first()
+
+    if admin_team:
+        # Fetch all teams
+        all_teams = db.session.query(Team).all()
+        # Fetch the first site (assuming there is only one for simplicity)
+        first_site = db.session.query(Site).filter_by(site_number=1).first()
+        start_time = datetime.utcnow().isoformat()
+
+        actions = []  # To store created actions
+        for team in all_teams:
+            new_action = Action(
+                site_id=first_site.id,
+                team_id=team.id,
+                action_state="ENTER",
+                timestamp=start_time,
+                guess="",
+                success=True
+            )
+            actions.append(new_action)  # Store the action in a list
+        db.session.add(new_action)  # Add the new action to the session
     db.session.commit()
 
 
