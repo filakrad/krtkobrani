@@ -22,33 +22,22 @@ def sanitize_string(the_string):
     return the_string.lower() # to lower case
 
 
-from datetime import datetime
-from sqlalchemy.orm import Session
+def start_game():
+    all_teams = db.session.query(Team).filter_by(is_admin=0).all()
+    first_site = db.session.query(Site).filter_by(site_number=1).first()
+    start_time = datetime.utcnow()
+    for team in all_teams:
+        new_action = Action(
+            site_id=first_site.id,
+            team_id=team.id,
+            action_state=ActionStates.ENTER.value,
+            timestamp=start_time,
+            guess="",
+            success=True
+        )
+        db.session.add(new_action)
+    db.session.commit()
 
-
-def start_game(admin_team_id):
-    session = db.session  # Use the existing db session
-
-    # Ceck if the given admin team ID is an admin
-    admin_team = session.query(Team).filter_by(id=admin_team_id, is_admin=True).first()
-
-    if admin_team:  # Proceed only if it's a valid admin
-        all_teams = session.query(Team).all()  # Fetch all teams
-        first_site = session.query(Site).filter_by(site_number=1).first()  # Fetch site with site_number 1
-
-        start_time = datetime.utcnow()  # Get the current UTC time
-
-        for team in all_teams:
-            new_action = Action(
-                site_id=first_site.id,
-                team_id=team.id,
-                action_state=ActionStates.ENTER.value,
-                timestamp=start_time,
-                guess="",
-                success=True
-            )
-            db.session.add(new_action)
-        db.session.commit()
 
 
 def try_to_solve(team_id, guess):
