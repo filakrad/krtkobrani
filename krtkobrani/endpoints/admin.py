@@ -69,19 +69,38 @@ def news():
     db.session.commit()
     return redirect(url_for('admin.news'))
 
+from flask_login import current_user
+
+def get_current_admin_team_id():
+    # Assuming current_user is a Team instance or has an attribute 'id'
+    return current_user.id if current_user.is_authenticated else None
+
 
 @admin.route('/game_start', methods=['GET', 'POST'])
 @admin_required
 def game_start():
     form = forms.GameStart()
-    action = db.session.query(Action).first()
-    if action:
-        game_started = True
-    else:
-        game_started = False
 
-    if request.method == 'GET': # process get method
+    # Check if any action exists to determine if the game has started
+    action = db.session.query(Action).first()
+    game_started = action is not None
+
+    if request.method == 'GET':  # Process GET request
         return render_template('game_start.html', form=form, game_started=game_started)
 
-    action_logic.start_game()
-    return redirect(url_for('admin.game_start'))
+    # Process POST request to start the game
+    try:
+        admin_team_id = get_current_admin_team_id()  # Get current admin's team ID
+
+        # Call start_game with the admin_team_id
+        if action_logic.start_game(admin_team_id):
+            return redirect(url_for('admin.game_start'))
+
+        # Handle the case where the game could not start
+        return render_template('game_start.html', form=form, game_started=game_started,
+                               error="Failed to start the game.")
+
+    except Exception as e:
+        # Log the exception and return an error message
+        return render_template('game_start.html', form=form, game_started=game_started,
+                               error=f"An error occurred: {str(e)}")
