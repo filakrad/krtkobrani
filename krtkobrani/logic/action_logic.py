@@ -38,14 +38,13 @@ def start_game(admin_team_id):
             new_action = Action(
                 site_id=first_site.id,
                 team_id=team.id,
-                action_state="ENTER",
+                action_state=ActionStates.ENTER.value,
                 timestamp=start_time,
                 guess="",
                 success=True
             )
             actions.append(new_action)  # Store the action in a list
         db.session.add(new_action)  # Add the new action to the session
-    db.session.commit()
 
 
 def try_to_solve(team_id, guess):
