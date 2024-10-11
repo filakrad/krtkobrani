@@ -21,7 +21,7 @@ def sanitize_string(the_string):
 
 
 def start_game():
-    all_teams = db.session.query(Team).all()
+    all_teams = db.session.query(Team).filter_by(is_admin= 0).all()
     first_site = db.session.query(Site).filter_by(site_number=1).first()
     start_time = datetime.utcnow()
     for team in all_teams:
