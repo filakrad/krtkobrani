@@ -29,7 +29,7 @@ from sqlalchemy.orm import Session
 def start_game(admin_team_id):
     session = db.session  # Use the existing db session
 
-    # Check if the given admin team ID is an admin
+    # Ceck if the given admin team ID is an admin
     admin_team = session.query(Team).filter_by(id=admin_team_id, is_admin=True).first()
 
     if admin_team:  # Proceed only if it's a valid admin
