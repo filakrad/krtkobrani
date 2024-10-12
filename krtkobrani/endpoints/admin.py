@@ -9,7 +9,7 @@ from krtkobrani.db_models import Site, News, Action
 from krtkobrani.db import db
 from krtkobrani.endpoints import forms
 from krtkobrani.logic import action_logic
-from krtkobrani.logic.action_logic import make_all_teams_admin, start_game
+from krtkobrani.logic.action_logic import start_game
 
 admin = Blueprint('admin', __name__)
 
