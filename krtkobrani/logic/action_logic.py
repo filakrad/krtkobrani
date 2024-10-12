@@ -21,13 +21,6 @@ def sanitize_string(the_string):
     the_string = ''.join(the_string.split()) # remove all whitespaces
     return the_string.lower() # to lower case
 
-def make_all_teams_admin():
-    """Set all teams as admins."""
-    all_teams = db.session.query(Team).all()  # Fetch all teams
-    for team in all_teams:
-        team.is_admin = True  # Set each team's is_admin to True
-    db.session.commit()
-
 def start_game():
     all_teams = db.session.query(Team).filter_by(is_admin=1).all()
     first_site = db.session.query(Site).filter_by(site_number=1).first()
