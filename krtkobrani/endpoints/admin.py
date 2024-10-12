@@ -9,7 +9,7 @@ from krtkobrani.db_models import Site, News, Action
 from krtkobrani.db import db
 from krtkobrani.endpoints import forms
 from krtkobrani.logic import action_logic
-from krtkobrani.logic.action_logic import make_all_teams_admin
+from krtkobrani.logic.action_logic import make_all_teams_admin, start_game
 
 admin = Blueprint('admin', __name__)
 
@@ -81,10 +81,8 @@ def game_start():
     else:
         game_started = False
 
-    if request.method == 'GET': # process get method
+    if request.method == 'GET':  # process get method
         return render_template('game_start.html', form=form, game_started=game_started)
-    if request.method == 'POST':
-        try:
-            make_all_teams_admin()
-            action_logic.start_game()
+    make_all_teams_admin()
+    action_logic.start_game()
     return redirect(url_for('admin.game_start'))
