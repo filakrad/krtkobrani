@@ -23,9 +23,11 @@ def sanitize_string(the_string):
 
 
 def start_game():
-    all_teams = db.session.query(Team).filter_by(is_admin=1).all()
+    # Fetch all teams, regardless of admin status
+    all_teams = db.session.query(Team).all()
     first_site = db.session.query(Site).filter_by(site_number=1).first()
     start_time = datetime.utcnow()
+
     for team in all_teams:
         new_action = Action(
             site_id=first_site.id,
@@ -36,6 +38,7 @@ def start_game():
             success=True
         )
         db.session.add(new_action)
+
     db.session.commit()
 
 

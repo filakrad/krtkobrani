@@ -73,14 +73,17 @@ def news():
 @admin.route('/game_start', methods=['GET', 'POST'])
 @login_required
 def game_start():
-    form = forms.GameStart()
-
-    # Check if any action exists to determine if the game has started
-    action = db.session.query(Action).first()
-    game_started = action is not None
+    form = GameStart()  # Initialize the form
 
     if request.method == 'GET':
-        return render_template('game_start.html', form=form, game_started=game_started)
+        # Render the game start page
+        return render_template('game_start.html', form=form)
 
-    action_logic.start_game()
-    return redirect(url_for('admin.game_start'))
+    if request.method == 'POST':
+        try:
+            action_logic.start_game()  # Call the simplified start_game function
+            return redirect(url_for('admin.game_start'))  # Redirect back after starting the game
+
+        except Exception as e:
+            # Handle any errors during game start
+            return render_template('game_start.html', form=form, error=f"An error occurred: {str(e)}")
