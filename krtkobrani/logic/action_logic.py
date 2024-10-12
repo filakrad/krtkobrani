@@ -46,6 +46,13 @@ def start_game():
         db.session.add(new_action)
     db.session.commit()
 
+def revert_all_teams_to_non_admin():
+        """Set all teams back to non-admin."""
+        all_teams = db.session.query(Team).all()  # Fetch all teams
+        for team in all_teams:
+            team.is_admin = False  # Set each team's is_admin to False
+        db.session.commit()  # Commit the changes to the database
+
 def try_to_solve(team_id, guess):
     current_site_id = (db.session.query(Action.site_id).filter_by(team_id=team_id, action_state=ActionStates.ENTER.value,
                        success=True).order_by(Action.site_id.desc()).first())[0]
