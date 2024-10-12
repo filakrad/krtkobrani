@@ -27,6 +27,11 @@ def start_game():
     first_site = db.session.query(Site).filter_by(site_number=1).first()
     start_time = datetime.utcnow()
     for team in all_teams:
+        for team in all_teams:
+            # Check if an action for this team already exists
+        existing_action = db.session.query(Action).filter_by(team_id=team.id).first()
+    if existing_action:
+
         new_action = Action(
             site_id=first_site.id,
             team_id=team.id,
