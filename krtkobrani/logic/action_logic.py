@@ -23,13 +23,8 @@ def sanitize_string(the_string):
 
 
 def start_game():
-    print("Start game function called!")  # Debug print statement
     all_teams = db.session.query(Team).all()
-
     first_site = db.session.query(Site).filter_by(site_number=1).first()
-    if not first_site:
-        print("No site found with site_number=1!")
-        return  # Or handle the error as needed
     start_time = datetime.utcnow()
     for team in all_teams:
             # Check if an action for this team already exists
@@ -44,14 +39,6 @@ def start_game():
         )
         db.session.add(new_action)
     db.session.commit()
-    try:
-        db.session.commit()
-        print("Game started successfully!")
-    except Exception as e:
-        print(f"Error during commit: {e}")
-
-
-
 
 def try_to_solve(team_id, guess):
     current_site_id = (db.session.query(Action.site_id).filter_by(team_id=team_id, action_state=ActionStates.ENTER.value,
