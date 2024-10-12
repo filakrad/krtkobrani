@@ -21,23 +21,7 @@ def sanitize_string(the_string):
     the_string = ''.join(the_string.split()) # remove all whitespaces
     return the_string.lower() # to lower case
 
-def start_game():
-    all_teams = db.session.query(Team).filter_by(is_admin=1).all()
-    first_site = db.session.query(Site).filter_by(site_number=1).first()
-    start_time = datetime.utcnow()
-    for team in all_teams:
-            # Check if an action for this team already exists
-        existing_action = db.session.query(Action).filter_by(team_id=team.id).first()
-        new_action = Action(
-            site_id=first_site.id,
-            team_id=team.id,
-            action_state=ActionStates.ENTER.value,
-            timestamp=start_time,
-            guess="",
-            success=True
-        )
-        db.session.add(new_action)
-    db.session.commit()
+
 
 def revert_all_teams_to_non_admin():
         """Set all teams back to non-admin."""

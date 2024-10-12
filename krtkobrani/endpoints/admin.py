@@ -82,6 +82,6 @@ def game_start():
 
     if request.method == 'GET':  # process get method
         return render_template('game_start.html', form=form, game_started=game_started)
-    action_logic.start_game()
+
     action_logic.revert_all_teams_to_non_admin()
     return redirect(url_for('admin.game_start'))
