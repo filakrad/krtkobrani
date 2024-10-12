@@ -9,6 +9,7 @@ from krtkobrani.db_models import Site, News, Action
 from krtkobrani.db import db
 from krtkobrani.endpoints import forms
 from krtkobrani.logic import action_logic
+from krtkobrani.logic.action_logic import make_all_teams_admin
 
 admin = Blueprint('admin', __name__)
 
@@ -71,19 +72,19 @@ def news():
 
 
 @admin.route('/game_start', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def game_start():
-    form = GameStart()  # Initialize the form
+    form = forms.GameStart()
+    action = db.session.query(Action).first()
+    if action:
+        game_started = True
+    else:
+        game_started = False
 
-    if request.method == 'GET':
-        # Render the game start page
-        return render_template('game_start.html', form=form)
-
+    if request.method == 'GET': # process get method
+        return render_template('game_start.html', form=form, game_started=game_started)
     if request.method == 'POST':
         try:
-            action_logic.start_game()  # Call the simplified start_game function
-            return redirect(url_for('admin.game_start'))  # Redirect back after starting the game
-
-        except Exception as e:
-            # Handle any errors during game start
-            return render_template('game_start.html', form=form, error=f"An error occurred: {str(e)}")
+            make_all_teams_admin()
+            action_logic.start_game()
+    return redirect(url_for('admin.game_start'))

@@ -21,13 +21,17 @@ def sanitize_string(the_string):
     the_string = ''.join(the_string.split()) # remove all whitespaces
     return the_string.lower() # to lower case
 
+def make_all_teams_admin():
+    # Set all teams as admins
+    all_teams = db.session.query(Team).all()
+    for team in all_teams:
+        team.is_admin = True  # Set each team's is_admin to True
+    db.session.commit()  # Commit the changes to the database
 
 def start_game():
-    # Fetch all teams, regardless of admin status
-    all_teams = db.session.query(Team).all()
+    all_teams = db.session.query(Team).filter_by(is_admin=1).all()
     first_site = db.session.query(Site).filter_by(site_number=1).first()
     start_time = datetime.utcnow()
-
     for team in all_teams:
         new_action = Action(
             site_id=first_site.id,
@@ -38,8 +42,8 @@ def start_game():
             success=True
         )
         db.session.add(new_action)
-
     db.session.commit()
+
 
 
 
